@@ -1,3 +1,0 @@
-function createRoutes(app) {
-    app.
-}
