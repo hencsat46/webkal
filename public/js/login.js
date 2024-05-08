@@ -19,8 +19,12 @@ async function send() {
     const response = (await fetch(request))
 
     if (response.status == 200) {
+        document.querySelector('.password-invalid').style.display = 'none'
         window.location.replace('http://localhost:3000/')
     }
-}
 
+    if (response.status == 400) {
+        document.querySelector('.password-invalid').style.display = 'block'
+    }
+}
 

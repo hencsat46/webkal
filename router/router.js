@@ -41,11 +41,20 @@ router.get('/signup', (req, res) => {
     res.render('signup')
 })
 
-router.post('/login_handler', cors(authCors), (req, res) => {
-    const body = req.body    
-    const token = generateToken(body.username)
-    res.cookie('token', token)
-    res.sendStatus(200)
+router.post('/login_handler', cors(authCors), async (req, res) => {
+    
+    const password = req.body.password
+
+    const result = await db.collection('users').findOne({username: req.body.username})
+    
+    if (password == result.password) {
+        const token = generateToken(req.body.username)
+        res.cookie('token', token)
+        res.sendStatus(200)
+    } else {
+        res.sendStatus(400)
+    }
+
 })
 
 router.post('/signup_handler', cors(authCors), async (req, res) => {
@@ -61,8 +70,8 @@ router.post('/signup_handler', cors(authCors), async (req, res) => {
         return res.sendStatus(400)
     }
     
-    // const result = await db.collection('users').insertOne(data)
-    // console.log(result)
+    const result = await db.collection('users').insertOne(data)
+    console.log(result)
     res.sendStatus(200)
 
 })

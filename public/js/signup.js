@@ -29,6 +29,7 @@ async function signup() {
     const response = await fetch(request)
 
     if (response.status == 200) {
+        document.querySelector('.exists').style.display = 'none'
         const request = new Request('http://localhost:3000/login_handler/', {
             method: "POST",
             mode: 'cors',
@@ -41,6 +42,8 @@ async function signup() {
         if (response.status == 200) {
             window.location.replace('http://localhost:3000/')
         }
+        
+    } else {
         if (response.status == 400) {
             document.querySelector('.exists').style.display = 'block'
         }

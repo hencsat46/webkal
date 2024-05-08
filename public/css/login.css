@@ -114,3 +114,8 @@ a.registration-link:hover {
     color: red;
     display: none;
 }
+
+.password-invalid {
+    color: red;
+    display: none;
+}
