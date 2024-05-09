@@ -17,6 +17,7 @@ const db = mongo.connection
 db.on('error', (error) => console.log(error))
 db.once('open', () => console.log("Connected to mongodb"))
 
+
 authCors = {
     origin: 'http://localhost:3000/login',
     origin: 'http://localhost:3000/signup',
@@ -28,15 +29,29 @@ mainCors = {
     methods: 'GET',
 }
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+    const clothes = await db.collection('clothes').find({}).toArray()
+
+    const clothesLength = Math.ceil(clothes.length / 3)
+    let clothesArray = new Array()
+    for (let i = 0; i < clothesLength; i++) {
+        clothesArray.push(new Array())
+        for (let j = 0; j < 3; j++) {
+            if (3 * i + j < clothes.length)
+                clothesArray[i].push(clothes[3 * i + j])
+        }
+    }
+
+    console.log(clothesArray)
     
-    
-    res.render('index')
+
+    res.render('index', {clothesArray: clothesArray})
 })
 
 router.get('/login', (req, res) => {
     res.render('login')
 })
+
 router.get('/signup', (req, res) => {
     res.render('signup')
 })
