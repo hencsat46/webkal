@@ -78,6 +78,16 @@ img {
     margin-bottom: 50px;
 }
 
+.products .clothes {
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+.products .shoes {
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
 .products-block {
     display: flex;
 
@@ -98,8 +108,13 @@ img {
 .item .item-image {
     width: 250px;
     height: 220px;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     margin: 0 auto;
+}
+
+.item-image img {
+    width: 250px;
+    height: 220px;
 }
 
 .item .item-name {

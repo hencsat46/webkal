@@ -103,6 +103,7 @@ button.submit:hover {
 
 a.registration-link:hover {
     border-bottom: 2px solid black;
+    cursor: pointer;
 }
 
 .error {

@@ -6,9 +6,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <title>Login</title>
-    <link rel="stylesheet" href="/public/css/login.css">
-    <script src="/public/js/login.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/styles.css" type="text/css">
+    <script src="/public/js/script.js" defer></script>
 </head>
 <body>
     <div class="wrapper">
@@ -23,21 +23,23 @@
                 <a href="http://localhost:3000/login" class="login">Войти</a>
             </div>
         </nav>
-        <div class="login-section">
-            <div class="username">
-                <div class="username-header">Логин</div>
-                <input type="text" class="username-text">
-            </div>
-            <div class="password">
-                <div class="password-invalid">Неверный пароль</div>
-                <div class="password-header">Пароль</div>
-                <input type="password" class="password-text">
-            </div>
-            <button class="submit" onclick="send()">Войти</button>
-            <div class="registration">
-                Нет аккаунта? <a class="registration-link" onclick="moveToSignup()">Зарегистрироваться</a>
-            </div>
-        </div>
+
+        <section class="products">
+            <div class="clothes">Одежда</div>
+            <% for (let i = 0; i < clothesArray.length; i++) { %>
+                <div class="products-block">
+                    <% for (let j = 0; j < clothesArray[i].length; j++) { %>
+                        <div class="item">
+                            <div class="item-image">
+                                <img src="/public/img/clothes/<%= clothesArray[i][j].img %>" alt="">
+                            </div>
+                            <div class="item-name"><%= clothesArray[i][j].name %></div>
+                            <div class="item-text"><%= clothesArray[i][j].description %></div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </section>
     </div>
 </body>
 </html>
