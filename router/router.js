@@ -3,14 +3,14 @@ const methods = require('methods')
 const path = require('path')
 const router = express.Router()
 const cors = require('cors')
-const cookie = require('cookie-parser')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const mongo = require('mongoose')
+const cookieParser = require('cookie-parser')
 
 const app = express()
 app.use(express.json())
-app.use(cookie(process.env.cookie_secret))
+app.use(cookieParser(process.env.cookie_secret))
 dotenv.config()
 mongo.connect(process.env.mongo_url)
 const db = mongo.connection
@@ -523,6 +523,67 @@ router.get('/auth', cors(mainCors), (req, res) => {
     }
     
 })
+
+router.use('/profile', (req, res, next) => {
+    const cookie = req.headers.cookie
+    if (cookie == undefined) {
+
+        return res.redirect('/')
+    }
+    const token = cookie.substring(cookie.indexOf('=') + 1)
+    jwt.verify(token, process.env.jwt_secret, (err, user) => {
+        console.log(err)
+        if (err) {
+            return res.redirect('/')
+        } else {
+            next()
+        }
+    })
+})
+
+router.get('/profile', async (req, res) => {
+
+    const cookie = req.headers.cookie
+
+    const username = getUsername(cookie)
+    const result = await db.collection('users').findOne({username: username})
+
+    const userData = {
+        username: result.username,
+        name: result.name,
+        surname: result.surname,
+        patronomyc: result.patronomyc,
+        phone: result.phone,
+    }
+
+    console.log(userData)
+
+    res.render('profile', {userData: userData})
+})
+
+router.put('/update_handler', async (req, res) => {
+    const data = req.body
+    const username = getUsername(req.headers.cookie)
+
+    const updates = {
+        $set: { 
+            name: data.name,
+            surname: data.surname,
+            patronomyc: data.patronomyc,
+            phone: data.phone
+        }
+    }
+
+    const result = await db.collection('users').updateOne({ username: username }, updates)
+
+    if (result.acknowledged) {
+        res.sendStatus(200)
+    }
+})
+
+function getUsername(cookie) {
+    return jwt.decode(cookie.substring(cookie.indexOf('=') + 1)).username
+}
 
 function generateToken(username) {
     return jwt.sign({username: username}, process.env.jwt_secret, {expiresIn:'1800s'})
