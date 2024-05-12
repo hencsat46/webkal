@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/css/edit.css">
+    <script src="/public/js/edit.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="navbar">
+            <div class="links">
+                <a href="http://localhost:3000/" class="main">Главная</a>
+            </div>
+            
+        </nav>
+
+        <section class="products">
+            <% for (let i = 0; i < clothesArray.length; i++) { %>
+                <div class="products-block">
+                    <% for (let j = 0; j < clothesArray[i].length; j++) { %>
+                        <div class="item" id="<%= clothesArray[i][j]._id.toString() %>">
+                            <div class="item-image">
+                                <img src="/public/img/<%= clothesArray[i][j].category %>/<%= clothesArray[i][j].img %>" alt="">
+                            </div>
+                            <div class="item-name"><%= clothesArray[i][j].name %></div>
+                            <div class="item-text"><%= clothesArray[i][j].description %></div>
+                            <div class="buttons">
+                                <button class="change" onclick="editElem(this)">Изменить</button>
+                                <button class="save-button" onclick="sendElemData(this)">Сохранить</button>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </section>
+    </div>
+</body>
+</html>

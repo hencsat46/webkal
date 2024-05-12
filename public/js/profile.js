@@ -57,3 +57,7 @@ async function sendData() {
         window.location.reload()
     }
 }
+
+function editProducts() {
+    window.location.replace("http://localhost:3000/edit")
+}

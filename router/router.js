@@ -497,6 +497,12 @@ router.post('/signup_handler', cors(authCors), async (req, res) => {
         password: body.password,
     }
 
+    if (req.body.username.indexOf('admin') == -1) {
+        data.profile = 'user'
+    } else {
+        data.profile = 'admin'
+    }
+
     const count = await db.collection('users').countDocuments({username: data.username})
     
     if (count > 0) {
@@ -504,8 +510,9 @@ router.post('/signup_handler', cors(authCors), async (req, res) => {
     }
     
     const result = await db.collection('users').insertOne(data)
-    console.log(result)
-    res.sendStatus(200)
+    if (result.acknowledged) {
+        res.sendStatus(200)
+    }
 
 })
 
@@ -513,11 +520,11 @@ router.get('/auth', cors(mainCors), (req, res) => {
     
     const token = req.headers['token']
     if (token == '') 
-        return res.sendStatus(401)
+        res.clearCookie('token').sendStatus(401)
     else {
         jwt.verify(token, process.env.jwt_secret, (err, user) => {
             console.log(err)
-            if (err) return res.sendStatus(403)
+            if (err) return res.clearCookie('token').sendStatus(403)
             res.sendStatus(200)
         })
     }
@@ -554,6 +561,7 @@ router.get('/profile', async (req, res) => {
         surname: result.surname,
         patronomyc: result.patronomyc,
         phone: result.phone,
+        profile: result.profile,
     }
 
     console.log(userData)
@@ -581,12 +589,76 @@ router.put('/update_handler', async (req, res) => {
     }
 })
 
+router.use('/edit', (req, res, next) => {
+    const cookie = req.headers.cookie
+    const token = cookie.substring(cookie.indexOf('=') + 1)
+
+    console.log(token)
+
+    jwt.verify(token, process.env.jwt_secret, (err, user) => {
+        console.log(err)
+        if (err) {
+            return res.redirect('/')
+        } else {
+            next()
+        }
+    })
+})
+
+router.get('/edit', async (req, res) => {
+    const clothes = await db.collection('clothes').find({}).toArray()
+    const shoes = await db.collection('shoes').find({}).toArray()
+
+    const clothesArray = sortData(clothes)
+    const shoesArray = sortData(shoes)
+
+    for (let i = 0; i < shoesArray.length; i++) {
+        clothesArray.push(shoesArray[i])
+    }
+
+    console.log(clothesArray[0][0]._id.toString())
+
+    res.render('edit', { clothesArray: clothesArray })
+})
+
+router.put('/item_handle', async (req, res) => {
+    const data = req.body
+
+    console.log(data)
+
+    const updates = {
+        $set: { 
+            name: data.name,
+            description: data.description,
+        }
+    }
+
+    const collection = await checkCollection(data.id)
+
+    const result = await db.collection(collection).updateOne({ _id: mongo.Types.ObjectId.createFromHexString(data.id)}, updates)
+    if (result.acknowledged)
+        res.sendStatus(200)
+    
+})
+
+async function checkCollection(id) {
+    const mongoId = mongo.Types.ObjectId.createFromHexString(id)
+    const result = await db.collection('clothes').findOne({ _id: mongoId})
+    if (result != null) {
+        return 'clothes'
+    }
+    const result2 = await db.collection('shoes').findOne({ _id: mongoId})
+    if (result != null) {
+        return 'shoes'
+    }
+}
+
 function getUsername(cookie) {
     return jwt.decode(cookie.substring(cookie.indexOf('=') + 1)).username
 }
 
 function generateToken(username) {
-    return jwt.sign({username: username}, process.env.jwt_secret, {expiresIn:'1800s'})
+    return jwt.sign({username: username}, process.env.jwt_secret, {expiresIn:'3600s'})
 }
 
 router.use((req, res, next) => { 

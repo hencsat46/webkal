@@ -107,7 +107,7 @@ section.buttons {
     align-items: center;
 }
 
-button.edit-button, button.quit-button, button.send-button {
+button.edit-button, button.quit-button, button.send-button, button.edit-admin {
     padding: 10px 30px;
     font-size: 12px;
     background-color: white;
@@ -118,7 +118,7 @@ button.edit-button, button.quit-button, button.send-button {
     margin: 7px 0;
 }
 
-button.edit-button:hover, button.quit-button:hover, button.send-button:hover {
+button.edit-button:hover, button.quit-button:hover, button.send-button:hover, button.edit-admin:hover {
     background-color: black;
     border: 2px solid white;
     color: white;
