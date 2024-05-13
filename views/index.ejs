@@ -29,12 +29,14 @@
             <% for (let i = 0; i < clothesArray.length; i++) { %>
                 <div class="products-block">
                     <% for (let j = 0; j < clothesArray[i].length; j++) { %>
-                        <div class="item">
+                        <div class="item" id="<%= clothesArray[i][j]._id.toString() %>">
                             <div class="item-image">
                                 <img src="/public/img/<%= clothesArray[i][j].category %>/<%= clothesArray[i][j].img %>" alt="">
                             </div>
                             <div class="item-name"><%= clothesArray[i][j].name %></div>
                             <div class="item-text"><%= clothesArray[i][j].description %></div>
+                            <div class="cart-info">Добавлено <span class="product-count">0</span> шт.</div>
+                            <button class="buy-product" onclick="addToCart(this)">Купить</button>
                         </div>
                     <% } %>
                 </div>

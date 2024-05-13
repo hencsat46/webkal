@@ -30,17 +30,32 @@ mainCors = {
 }
 
 router.get('/', async (req, res) => {
-    const clothes = await db.collection('clothes').find().sort({ date: -1 }).limit(12).toArray()
-    const shoes = await db.collection('shoes').find().sort({ date: -1 }).limit(12).toArray()
+    const clothes = await db.collection('products').find().sort({ date: -1 }).limit(12).toArray()
 
     const clothesArray = sortData(clothes)
-    const shoesArray = sortData(shoes)
 
-    for (let i = 0; i < shoesArray.length; i++) {
-        clothesArray.push(shoesArray[i])
-    }
+    //console.log(clothesArray[0][0]._id.toString())
 
     res.render('index', {clothesArray: clothesArray})
+})
+
+router.post('/cart_handle', async (req, res) => {
+    const data = req.body
+    const cookie = req.headers.cookie
+    const username = getUsername(cookie)
+
+    const id = mongo.Types.ObjectId.createFromHexString(req.body.id)
+
+    const updates = {
+        $push: {
+            cart: id
+        }
+    }
+
+    const result = await db.collection('users').updateOne({ username: username }, updates)
+    console.log(result)
+    
+    res.sendStatus(200)
 })
 
 router.get('/login', (req, res) => {
@@ -251,12 +266,12 @@ router.get('/data_clothes', async (req, res) => {
     }
   ];
 
-    const result = await db.collection('clothes').insertMany(clothesData)
+    const result = await db.collection('products').insertMany(clothesData)
     res.sendStatus(200)
 })
 
 router.get('/shoes', async (req, res) => {
-    const clothes = await db.collection('shoes').find({}).toArray()
+    const clothes = await db.collection('products').find({ category: 'shoes' }).toArray()
 
     const clothesArray = sortData(clothes)
     
@@ -443,13 +458,13 @@ router.get('/data_shoes', async (req, res) => {
     }
   ];
 
-    const result = await db.collection('shoes').insertMany(shoesData)
+    const result = await db.collection('products').insertMany(shoesData)
     res.sendStatus(200)
         
 })
 
 router.get('/clothes', async (req, res) => {
-    const clothes = await db.collection('clothes').find({}).toArray()
+    const clothes = await db.collection('products').find({ category: 'clothes' }).toArray()
 
     const clothesArray = sortData(clothes)
     
@@ -495,6 +510,7 @@ router.post('/signup_handler', cors(authCors), async (req, res) => {
     const data = {
         username: body.username,
         password: body.password,
+        cart: []
     }
 
     if (req.body.username.indexOf('admin') == -1) {
@@ -606,15 +622,9 @@ router.use('/edit', (req, res, next) => {
 })
 
 router.get('/edit', async (req, res) => {
-    const clothes = await db.collection('clothes').find({}).toArray()
-    const shoes = await db.collection('shoes').find({}).toArray()
+    const clothes = await db.collection('products').find({}).toArray()
 
     const clothesArray = sortData(clothes)
-    const shoesArray = sortData(shoes)
-
-    for (let i = 0; i < shoesArray.length; i++) {
-        clothesArray.push(shoesArray[i])
-    }
 
     console.log(clothesArray[0][0]._id.toString())
 
@@ -633,25 +643,12 @@ router.put('/item_handle', async (req, res) => {
         }
     }
 
-    const collection = await checkCollection(data.id)
+    const result = await db.collection('products').updateOne({ _id: mongo.Types.ObjectId.createFromHexString(data.id)}, updates)
 
-    const result = await db.collection(collection).updateOne({ _id: mongo.Types.ObjectId.createFromHexString(data.id)}, updates)
     if (result.acknowledged)
         res.sendStatus(200)
     
 })
-
-async function checkCollection(id) {
-    const mongoId = mongo.Types.ObjectId.createFromHexString(id)
-    const result = await db.collection('clothes').findOne({ _id: mongoId})
-    if (result != null) {
-        return 'clothes'
-    }
-    const result2 = await db.collection('shoes').findOne({ _id: mongoId})
-    if (result != null) {
-        return 'shoes'
-    }
-}
 
 function getUsername(cookie) {
     return jwt.decode(cookie.substring(cookie.indexOf('=') + 1)).username

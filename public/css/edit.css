@@ -132,6 +132,7 @@ img {
 
 .item .item-text {
     min-height: 70px;
+    text-align: center;
 }
 
 .item-image img {

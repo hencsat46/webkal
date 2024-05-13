@@ -57,3 +57,39 @@ async function toProfile() {
         window.location.replace('http://localhost:3000/profile')
     }
 }
+
+async function addToCart(element) {
+    let tokenString = getCookie().token
+    if (tokenString == undefined) {
+        window.location.replace('http://localhost:3000/login/')
+        return
+    }
+
+
+    const item = element.parentElement
+
+    const data = {
+        id: item.getAttribute('id')
+    }
+
+    const request = new Request('http://localhost:3000/cart_handle/', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+
+    const response = await fetch(request)
+
+    let count = item.querySelector('.product-count')
+
+    count.innerText = (parseInt(count.innerText) + 1).toString()
+
+    const info = item.querySelector('.cart-info')
+
+    info.style.display = 'block'
+
+
+}

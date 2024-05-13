@@ -29,7 +29,7 @@
             <% for (let i = 0; i < clothesArray.length; i++) { %>
                 <div class="products-block">
                     <% for (let j = 0; j < clothesArray[i].length; j++) { %>
-                        <div class="item">
+                        <div class="item" id="<%= clothesArray[i][j]._id.toString() %>">
                             <div class="item-image">
                                 <img src="/public/img/clothes/<%= clothesArray[i][j].img %>" alt="">
                             </div>
