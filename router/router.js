@@ -7,9 +7,14 @@ const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const mongo = require('mongoose')
 const cookieParser = require('cookie-parser')
+const multer = require('multer')
+const fs = require('fs')
+const { render } = require('ejs')
 
 const app = express()
+const upload = multer()
 app.use(express.json())
+app.use(upload.array())
 app.use(cookieParser(process.env.cookie_secret))
 dotenv.config()
 mongo.connect(process.env.mongo_url)
@@ -60,10 +65,6 @@ router.post('/cart_handle', async (req, res) => {
 
 router.get('/login', (req, res) => {
     res.render('login')
-})
-
-router.get('/signup', (req, res) => {
-    res.render('signup')
 })
 
 router.get('/data_clothes', async (req, res) => {
@@ -487,6 +488,9 @@ function sortData(array) {
     return clothesArray
 }
 
+router.get('/about', (req, res) => {
+    res.render('about')
+})
 
 
 router.post('/login_handler', cors(authCors), async (req, res) => {
@@ -571,6 +575,17 @@ router.get('/profile', async (req, res) => {
     const username = getUsername(cookie)
     const result = await db.collection('users').findOne({username: username})
 
+    let data = new Array()
+    console.log(result.cart)
+    for (let i = 0; i < result.cart.length; i++) {
+        const product = await db.collection('products').findOne({ _id: result.cart[i]})
+        console.log(product)
+        data.push(product)
+    }
+
+    console.log(data)
+
+
     const userData = {
         username: result.username,
         name: result.name,
@@ -582,7 +597,7 @@ router.get('/profile', async (req, res) => {
 
     console.log(userData)
 
-    res.render('profile', {userData: userData})
+    res.render('profile', {userData: userData, data: data})
 })
 
 router.put('/update_handler', async (req, res) => {
@@ -647,6 +662,65 @@ router.put('/item_handle', async (req, res) => {
 
     if (result.acknowledged)
         res.sendStatus(200)
+    
+})
+
+router.delete('/delete_handle', async (req, res) => {
+    const data = req.body
+    const username = getUsername(req.headers.cookie)
+    const updates = {
+        $pull: {
+            cart: mongo.Types.ObjectId.createFromHexString(data.id)
+        }
+    }
+
+    const result = await db.collection('users').updateOne({ username: username }, updates)
+    console.log(result)
+    if (result.acknowledged)
+        res.sendStatus(200)
+})
+
+router.get('/profile/add', (req, res) => {
+    res.render('add_product')
+})
+
+router.post('/upload', upload.single('photo'), (req, res) => {
+    const file = req.file
+    const name = req.body.productName
+    const des = req.body.description
+    const coll = req.body.collection
+
+    const data = {
+        name: name,
+        description: des,
+        date: new Date(),
+        img: file.originalname,
+        category: coll,
+    }
+
+    const path = '/home/ilya/prog_js/web/public/img/' + coll + '/' + file.originalname
+    fs.writeFile(path, file.buffer, (err) => {
+        if (err) console.log(err)
+    })
+
+    const result = db.collection('products').insertOne(data)
+    res.sendStatus(200)
+})
+
+router.get('/backlink', (req, res) => {
+    res.render('backlink')
+})
+
+router.post('/backlink_handle', async (req, res) => {
+    const data = req.body
+
+    console.log(data)
+    
+    const result = await db.collection('backlink').insertOne(data)
+    if (result.acknowledged) {
+        res.sendStatus(200)
+    }
+
     
 })
 

@@ -14,7 +14,7 @@
                 <a href="http://localhost:3000/" class="main">Главная</a>
                 <a href="http://localhost:3000/clothes" class="clothes">Одежда</a>
                 <a href="http://localhost:3000/shoes" class="boots">Обувь</a>
-                <a href="#" class="about">О магазине</a>
+                <a href="http://localhost:3000/about" class="about">О магазине</a>
             </div>
         </nav>
 
@@ -27,7 +27,7 @@
                     <div class="profile-username"><%= userData.username %></div>
                     <section class="buttons">
                         <button class="edit-button" onclick="editProfile(this)">Изменить</button>
-                        <button class="quit-button">Выйти</button>
+                        <button class="quit-button" onclick="quit()">Выйти</button>
                     </section>
                 </div>
                 <div class="full-info">
@@ -72,9 +72,25 @@
                 <button class="send-button" onclick="sendData()">Отправить</button>
                 <% if (userData.profile == 'admin') { %>
                     <button class="edit-admin" onclick="editProducts()">Изменить товары</button>
+                    <button class="add-admin" onclick="addProducts()">Добавить товары</button>
                 <% } %>
             </section>
-            <div class="cart"></div>
+            <div class="cart">
+                <div class="cart-name">Корзина</div>
+                <div class="cart-products">
+
+                    <% for (let i = 0; i < data.length; i++) { %>
+                    <div class="item" id="<%= data[i]._id.toString() %>">
+                        <div class="item-image">
+                            <img src="/public/img/<%= data[i].category %>/<%= data[i].img %>" alt="">
+                        </div>
+                        <div class="item-name"><%= data[i].name %></div>
+                        <div class="item-text"><%= data[i].description %></div>
+                        <button class="buy-product" onclick="deleteFromCart(this)">Удалить</button>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
         </section>
     </div>
 </body>

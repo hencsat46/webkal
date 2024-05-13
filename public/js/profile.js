@@ -61,3 +61,35 @@ async function sendData() {
 function editProducts() {
     window.location.replace("http://localhost:3000/edit")
 }
+
+function quit() {
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    window.location.replace('http://localhost:3000/')
+}
+
+async function deleteFromCart(element) {
+    const item = element.parentElement
+
+    const id = item.getAttribute('id')
+    const data = {
+        id: id,
+    }
+
+    const request = new Request('http://localhost:3000/delete_handle', {
+        method: 'DELETE',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+
+    const response = await fetch(request)
+
+    if (response.status == 200)
+        window.location.reload()
+}
+
+function addProducts() {
+    window.location.replace('http://localhost:3000/profile/add')
+}

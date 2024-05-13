@@ -107,7 +107,7 @@ section.buttons {
     align-items: center;
 }
 
-button.edit-button, button.quit-button, button.send-button, button.edit-admin {
+button {
     padding: 10px 30px;
     font-size: 12px;
     background-color: white;
@@ -118,7 +118,7 @@ button.edit-button, button.quit-button, button.send-button, button.edit-admin {
     margin: 7px 0;
 }
 
-button.edit-button:hover, button.quit-button:hover, button.send-button:hover, button.edit-admin:hover {
+button:hover {
     background-color: black;
     border: 2px solid white;
     color: white;
@@ -132,4 +132,59 @@ section.send-wrapper {
 
 button.send-button {
     display: none;
+}
+
+.item {
+    width: 340px;
+    min-height: 400px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.item .item-image {
+    width: 250px;
+    height: 220px;
+    /* border: 1px solid red; */
+    margin: 0 auto;
+}
+
+.item-image img {
+    width: 250px;
+    height: 220px;
+}
+
+.item .item-name {
+    font-size: 30px;
+    text-align: center;
+    margin: 5px 0;
+}
+
+.item .item-text {
+    min-height: 70px;
+    text-align: center;
+}
+
+.cart {
+    display: flex;
+    flex-direction: column;
+    border: solid 2px black;
+    border-radius: 10px;
+    margin-right: 30px;
+    padding: 10px;
+}
+
+.cart-name {
+    font-size: 30px;
+    text-align: center;
+}
+.cart-products {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
 }
