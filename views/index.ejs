@@ -18,6 +18,7 @@
                 <a href="http://localhost:3000/clothes" class="clothes">Одежда</a>
                 <a href="http://localhost:3000/shoes" class="boots">Обувь</a>
                 <a href="http://localhost:3000/about" class="about">О магазине</a>
+                <a href="http://localhost:3000/backlink" class="backlink">Обратная связь</a>
             </div>
             <div class="profile-pic">
                 <a href="http://localhost:3000/login" class="login">Войти</a>
@@ -34,6 +35,11 @@
                                 <img src="/public/img/<%= clothesArray[i][j].category %>/<%= clothesArray[i][j].img %>" alt="">
                             </div>
                             <div class="item-name"><%= clothesArray[i][j].name %></div>
+                            <% if (clothesArray[i][j].category == 'clothes') { %>
+                                <div class="item-category">Категория: Одежда</div>
+                            <% } else { %>
+                                <div class="item-category">Категория: Обувь</div>
+                            <% } %>
                             <div class="item-text"><%= clothesArray[i][j].description %></div>
                             <div class="cart-info">Добавлено <span class="product-count">0</span> шт.</div>
                             <button class="buy-product" onclick="addToCart(this)">Купить</button>

@@ -83,3 +83,27 @@ async function sendElemData(element) {
         window.location.reload()
     }
 }
+
+async function deleteElem(element) {
+    const item = element.parentElement.parentElement
+    const id = item.getAttribute('id')
+
+    const data = {
+        id: id
+    }
+
+    const request = new Request('http://localhost:3000/delete_item_handle', {
+        method: 'DELETE',
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    })
+
+    const response = await fetch(request)
+
+    if (response.status == 200) {
+        window.location.reload()
+    }
+}

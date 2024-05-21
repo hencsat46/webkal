@@ -680,6 +680,16 @@ router.delete('/delete_handle', async (req, res) => {
         res.sendStatus(200)
 })
 
+router.delete('/delete_item_handle', async (req, res) => {
+    const data = req.body
+    const productId = mongo.Types.ObjectId.createFromHexString(data.id)
+
+    const result = await db.collection('products').deleteOne({_id: productId})
+
+    if (result.acknowledged)
+        res.sendStatus(200)
+})
+
 router.get('/profile/add', (req, res) => {
     res.render('add_product')
 })

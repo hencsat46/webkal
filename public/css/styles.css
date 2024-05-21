@@ -146,6 +146,11 @@ img {
     text-align: center;
 }
 
+.item .item-category {
+    font-size: 20px;
+    margin: 5px 0;
+}
+
 button {
     padding: 10px 30px;
     font-size: 12px;
